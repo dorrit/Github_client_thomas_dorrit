@@ -4,7 +4,7 @@ require 'json'
 require 'base64'
 require 'faraday'
 
-require 'Gist'
+require 'gist'
 
-@github_username = 'testusername'
-@github_password = 'testpassword'
+$github_username = 'testusername'
+$github_password = 'testpassword'

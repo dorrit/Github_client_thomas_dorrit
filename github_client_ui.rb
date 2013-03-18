@@ -1,25 +1,26 @@
 require 'faraday'
 require 'json'
 require 'base64'
-require './lib/Gist.rb'
+require './lib/gist.rb'
 
-@github_username = nil
-@github_password = nil
+$github_username = 'dorrit'
+$github_password = 'carriagereturn1'
 
 def welcome
-  puts "Welcome to the Github command-line client."
-  puts "Enter your GitHub username:"
-  @github_username = gets.chomp
-  puts "Enter your GitHub password:"
-  @github_password = gets.chomp
+  puts "\nWelcome to the Github command-line client."
+  # puts "Enter your GitHub username:"
+  # @github_username = gets.chomp
+  # puts "Enter your GitHub password:"
+  # @github_password = gets.chomp
   menu
 end
 
 def menu
   choice = nil
   until choice == 'e'
-    puts "What would you like to do?"
-    puts "Press 'l' to list your Gists, 'c' to create a new Gist, 'v' to view a Gist, 'u' to update a Gist, or 'd' to delete a Gist."
+    puts "\n      MAIN MENU"
+    puts "\nWhat would you like to do?"
+    puts "\nPress 'l' to list your Gists, 'c' to create a new Gist, 'v' to view a Gist, 'u' to update a Gist, or 'd' to delete a Gist."
     puts "Press 'e' to exit."
 
     case choice = gets.chomp
@@ -44,7 +45,7 @@ end
 def create
   public_attribute = nil
   while public_attribute.nil?
-    puts "Would you like this Gist to be public? Type 'y' or 'n'."
+    puts "\nWould you like this Gist to be public? Type 'y' or 'n'."
     public_attribute = gets.chomp
     case public_attribute
     when 'y'
@@ -67,7 +68,26 @@ def create
 end
 
 def list
-  Gist.list
+  gists = Gist.all
+  puts "\nHere is a list of all of your Gists"
+  puts "\n ID# \tPUBLIC \t  CREATED AT    \t    HTML URL"
+  gists.each do |gist|
+    puts "#{gist['id']}\t#{gist['public']}\t#{gist['created_at']}\t#{gist['html_url']}"
+  end
+end
+
+def update
+end
+
+def view
+end
+
+def delete
+  list
+  puts "\nWhich ID number do you want to delete?"
+  id_numb = gets.chomp
+  Gist.delete(id_numb)
+  puts "You just deleted this file"
 end
 
 welcome
