@@ -1,6 +1,9 @@
 require 'faraday'
 require 'json'
+
 require 'base64'
+require 'time'
+
 require './lib/gist.rb'
 
 $github_username = 'dorrit'
@@ -72,7 +75,7 @@ def list
   puts "\nHere is a list of all of your Gists"
   puts "\n ID# \tPUBLIC \t  CREATED AT    \t    HTML URL"
   gists.each do |gist|
-    puts "#{gist['id']}\t#{gist['public']}\t#{gist['created_at']}\t#{gist['html_url']}"
+  puts "#{gist['id']}\t#{gist['public']}\t#{gist['created_at']}\t#{gist['html_url']}"
   end
 end
 
@@ -80,6 +83,17 @@ def update
 end
 
 def view
+  list
+  puts "\nWhich ID number do you want to view?"
+  id = gets.chomp
+  gist = Gist.view(id)
+  puts "ID: #{id}"
+  puts "Public: #{gist.public_attribute}"
+  puts "Created at: #{gist.created_at.strftime("%A, %B %e, %Y, %l:%M%P")}"
+  puts "URL: #{gist.url}"
+  puts "Files: #{gist.files}"
+  puts "User Name: #{gist.user_name}"
+  puts "Description: #{gist.description}"
 end
 
 def delete
