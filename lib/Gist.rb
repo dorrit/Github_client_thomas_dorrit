@@ -30,7 +30,10 @@ class Gist
       request.url "https://api.github.com/gists"
       request.headers['Authorization'] = "Basic " + Base64.encode64("#{$github_username}:#{$github_password}")
     end
-    JSON.parse(list_response.body)
+    # p list_response
+    response = JSON.parse(list_response.body)
+    # p response
+    gists = response.map {|gist| Gist.new(gist)}
   end
 
   def self.view(id)

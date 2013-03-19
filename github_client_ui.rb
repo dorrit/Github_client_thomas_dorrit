@@ -68,6 +68,10 @@ def create
   files = {filename => {:content => content}}
 
   Gist.create(:public => public_attribute, :description => description, :files => files)
+  #   puts 'you made a gist'
+  # else
+  #   puts 'you messed up'
+  # end
 end
 
 def list
@@ -75,11 +79,22 @@ def list
   puts "\nHere is a list of all of your Gists"
   puts "\n ID# \tPUBLIC \t  CREATED AT    \t    HTML URL"
   gists.each do |gist|
-  puts "#{gist['id']}\t#{gist['public']}\t#{gist['created_at']}\t#{gist['html_url']}"
+  puts "#{gist.id}\t#{gist.public_attribute}\t#{gist.created_at.strftime("%A, %B %e, %Y, %l:%M%P")}\t#{gist.url}"
   end
 end
 
 def update
+  list
+    puts "\nWhich ID number do you want to update?"
+    id = gets.chomp
+    gist = Gist.view(id)
+    puts "Files: #{gist.files}"
+    puts "Description: #{gist.description}"
+    puts "Enter the updated description (or just hit enter to leave it unchanged)"
+    description = gets.chomp
+    puts ""
+
+    Gist.update(:description => description, :files => files)
 end
 
 def view

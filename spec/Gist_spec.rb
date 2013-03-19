@@ -1,31 +1,26 @@
 require 'spec_helper'
 
 describe Gist do 
+
+  attributes = {'id' => '1234567',
+              'public' => 'true',
+              'url' => 'https://api.github.com/gists/5179083',
+              'description' => 'nothing much',
+              'files' => {'scrumptious.rb' => 'something'},
+              'created_at' => '2013-03-17T01:07:10Z',
+              'user' => {'login' => 'mumford'}
+              }
+ 
   context '#initialize' do 
     it 'initializes an instance of Gist' do
-      attributes = {'id' => '1234567',
-                    'public' => 'true',
-                    'url' => 'https://api.github.com/gists/5179083',
-                    'description' => 'nothing much',
-                    'files' => {'scrumptious.rb' => 'something'},
-                    'created_at' => '2013-03-17T01:07:10Z',
-                    'user' => {'login' => 'mumford'}
-                    }
       gist = Gist.new(attributes)
       gist.should be_an_instance_of Gist
     end
   end
 
   context 'attr_readers' do
-    attributes = { 'id' => '1234567',
-                    'public' => 'true',
-                    'url' => 'https://api.github.com/gists/5179083',
-                    'description' => 'nothing much',
-                    'files' => {'scrumptious.rb' => 'something'},
-                    'created_at' => '2013-03-17T01:07:10Z',
-                    'user' => {'login' => 'mumford'}
-                    }
-    gist = Gist.new(attributes)
+    let(:attributes) {attributes}
+    let(:gist) {Gist.new(attributes)}
     it 'should return the value for id' do
       gist.id.should eq '1234567'
     end
@@ -42,7 +37,7 @@ describe Gist do
       gist.description.should eq 'nothing much'
     end
 
-    it 'should return the keys for files' do
+    it 'should return the names of the files' do
       gist.files.should eq 'scrumptious.rb'
     end
 
@@ -77,30 +72,33 @@ describe Gist do
   end
 
   context '.all' do
+    gist = [attributes]
     it 'GETs a list of all the user\'s Gists' do
-      gist = {:public => 'true',
-              :description => 'a test gist',
-              :files => {'test_file.rb' => {:content => 'puts "hello world!!"'}}}
       stub = stub_request(:get, "https://#{$github_username}:#{$github_password}@api.github.com/gists").to_return(:body => gist.to_json)
       Gist.all
       stub.should have_been_requested
     end 
+
+    it 'returns an array of gist objects' do 
+      stub = stub_request(:get, "https://#{$github_username}:#{$github_password}@api.github.com/gists").to_return(:body => gist.to_json)
+      gists = Gist.all
+      gists.first.should be_an_instance_of Gist
+    end
   end
 
   context '.view' do 
+    gist = attributes
+    id = 123456
+
     it 'GETs a specific Gist' do
-      id = 123456
-     gist = { 'id' => '1234567',
-                    'public' => 'true',
-                    'url' => 'https://api.github.com/gists/5179083',
-                    'description' => 'nothing much',
-                    'files' => {'scrumptious.rb' => 'something'},
-                    'created_at' => '2013-03-17T01:07:10Z',
-                    'user' => {'login' => 'mumford'}
-                    }
       stub = stub_request(:get, "https://#{$github_username}:#{$github_password}@api.github.com/gists/#{id}").to_return(:body => gist.to_json)
       Gist.view(id)
       stub.should have_been_requested
+    end
+
+    it 'should return a gist object' do 
+      stub = stub_request(:get, "https://#{$github_username}:#{$github_password}@api.github.com/gists/#{id}").to_return(:body => gist.to_json)
+      Gist.view(id).should be_an_instance_of Gist
     end
   end
 end
